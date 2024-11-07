@@ -30,4 +30,16 @@ public class BookController {
         return "Added successfully";
     }
 
+    @PutMapping("/books")
+    public String updateBook(@RequestBody Book book){
+        bookService.updateBook(book);
+        return "Updated successfully";
+    }
+
+    @DeleteMapping("/books/{bookId}")
+    public String deleteBook(@PathVariable int bookId){
+        bookService.deleteBook(bookId);
+        return "Deleted successfully";
+    }
+
 }

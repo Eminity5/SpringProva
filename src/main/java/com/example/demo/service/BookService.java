@@ -29,4 +29,20 @@ public class BookService {
     public void addBook(Book book) {
         bookList.add(book);
     }
+
+    public void updateBook(Book book) {
+        for(int x = 0; x < bookList.size(); x++){
+            if (book.getId() == bookList.get(x).getId()){
+                bookList.set(x, book);
+            }
+        }
+    }
+
+    public void deleteBook(int bookId) {
+        for(int x = 0; x < bookList.size(); x++){
+            if (bookId == bookList.get(x).getId()){
+                bookList.remove(bookList.get(x));
+            }
+        }
+    }
 }
