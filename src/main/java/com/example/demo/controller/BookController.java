@@ -30,6 +30,12 @@ public class BookController {
         return "Added successfully";
     }
 
+    @PostMapping("/booksList")
+    public String addBook(@RequestBody List<Book> books){
+        bookService.addBook(books);
+        return "Added successfully";
+    }
+
     @PutMapping("/books")
     public String updateBook(@RequestBody Book book){
         bookService.updateBook(book);

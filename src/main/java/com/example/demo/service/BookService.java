@@ -27,6 +27,10 @@ public class BookService {
         bookRepository.save(book);
     }
 
+    public void addBook(List<Book> books) {
+        bookRepository.saveAll(books);
+    }
+
     public void updateBook(Book book) {
         bookRepository.save(book);
     }
