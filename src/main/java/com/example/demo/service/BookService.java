@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ public class BookService {
             new Book(1, "Harry Potter e la Pietra filosofale", 180, "Fantasy", 16.80f),
             new Book(2, "Harry Potter e la Camera dei segreti", 220, "Mistery", 17.20f),
             new Book(3, "Harry Potter e il Prigioniero di Azkaban", 310, "Adventure", 23.0f)));
+
+    @Autowired
+    BookRepository bookRepository;
 
     public List<Book> getBookList(){
         return bookList;
