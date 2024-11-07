@@ -25,4 +25,8 @@ public class BookService {
                 .findFirst()
                 .get();
     }
+
+    public void addBook(Book book) {
+        bookList.add(book);
+    }
 }

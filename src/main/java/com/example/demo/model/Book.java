@@ -11,6 +11,9 @@ public class Book {
     private String category;
     private float price;
 
+    public Book() {
+    }
+
     public Book(int id, String name, int pages, String category, float price) {
         this.id = id;
         this.name = name;
