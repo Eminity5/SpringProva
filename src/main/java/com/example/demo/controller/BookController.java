@@ -49,7 +49,7 @@ public class BookController {
     @PutMapping("/books")
     public String updateBooks(@RequestBody List<Book> books){
         bookService.updateBooks(books);
-        return "Added successfully";
+        return "Updated successfully";
     }
 
     @DeleteMapping("/books/{bookId}")

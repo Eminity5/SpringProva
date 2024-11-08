@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +20,11 @@ public class Author {
     private int id;
     private String name;
     private String age;
-    @OneToMany(mappedBy = "author")
-    private List<Book> WrittenBooks;
 
+    //@JsonManagedReference
+    @OneToMany(mappedBy = "author")
+    @JsonIgnore
+    private List<Book> WrittenBooks;
 
 }
 

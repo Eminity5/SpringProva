@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +19,10 @@ public class Book {
     private int pages;
     private String category;
     private float price;
+
+    // @JsonBackReference
+    @JoinColumn(name = "author_id")
     @ManyToOne
     private Author author;
-
 
 }
