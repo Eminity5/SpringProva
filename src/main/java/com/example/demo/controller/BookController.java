@@ -42,14 +42,12 @@ public class BookController {
 
     @PutMapping("/book")
     public String updateBook(@RequestBody Book book){
-        bookService.updateBook(book);
-        return "Updated successfully";
+        return bookService.updateBook(book);
     }
 
     @PutMapping("/books")
     public String updateBooks(@RequestBody List<Book> books){
-        bookService.updateBooks(books);
-        return "Updated successfully";
+        return bookService.updateBooks(books);
     }
 
     @DeleteMapping("/books/{bookId}")
