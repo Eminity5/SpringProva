@@ -42,14 +42,12 @@ public class AuthorController {
 
     @PutMapping("/author")
     public String updateAuthor(@RequestBody Author author){
-        authorService.updateAuthor(author);
-        return "Updated successfully";
+        return authorService.updateAuthor(author);
     }
 
     @PutMapping("/authors")
     public String updateAuthors(@RequestBody List<Author> authors){
-        authorService.updateAuthors(authors);
-        return "Updated successfully";
+        return authorService.updateAuthors(authors);
     }
 
     @DeleteMapping("/authors/{authorId}")

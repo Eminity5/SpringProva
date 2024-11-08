@@ -3,15 +3,11 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
-@Setter
-@Getter
 @Entity
 public class Author {
 
@@ -26,6 +22,41 @@ public class Author {
     @JsonIgnore
     private List<Book> WrittenBooks;
 
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    @JsonIgnore
+    public List<Book> getWrittenBooks() {
+        return WrittenBooks;
+    }
+
+    @JsonIgnore
+    public void setWrittenBooks(List<Book> writtenBooks) {
+        WrittenBooks = writtenBooks;
+    }
 }
 
 

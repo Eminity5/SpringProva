@@ -33,12 +33,31 @@ public class BookService {
         bookRepository.saveAll(books);
     }
 
-    public void updateBook(Book book) {
-        bookRepository.save(book);
+    public String updateBook(Book book) {
+        if(bookRepository.existsById(book.getId())){
+            bookRepository.save(book);
+            return "Updated successfully";
+        }else {
+            return "Element does not Exist";
+        }
     }
 
-    public void updateBooks(List<Book> books) {
-        bookRepository.saveAll(books);
+    public String updateBooks(List<Book> books) {
+        StringBuilder elementsNotFounded = new StringBuilder();
+
+        for(Book b : books){
+            if(bookRepository.existsById(b.getId())){
+                bookRepository.save(b);
+            }else{
+                elementsNotFounded.append(b.getId() + " ");
+            }
+        }
+
+        if (elementsNotFounded.isEmpty()){
+            return "Updated all elements successfully";
+        }else{
+            return "Elements " + elementsNotFounded.toString() + "were not found";
+        }
     }
 
     public void deleteBook(int bookId) {
