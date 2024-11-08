@@ -13,7 +13,6 @@ public class BookController {
     @Autowired
     BookService bookService;
 
-
     @GetMapping("/books")
     public List<Book> getBookList(){
         return bookService.getBookList();
@@ -24,27 +23,44 @@ public class BookController {
         return bookService.getBookById(bookId);
     }
 
-    @PostMapping("/books")
+    @GetMapping("/books/searchByName")
+    public List<Book> getBookByName(@RequestParam String name){
+        return bookService.getBookByName(name);
+    }
+
+    @PostMapping("/book")
     public String addBook(@RequestBody Book book){
         bookService.addBook(book);
         return "Added successfully";
     }
 
-    @PostMapping("/booksList")
-    public String addBook(@RequestBody List<Book> books){
-        bookService.addBook(books);
+    @PostMapping("/books")
+    public String addBooks(@RequestBody List<Book> books){
+        bookService.addBooks(books);
         return "Added successfully";
     }
 
-    @PutMapping("/books")
+    @PutMapping("/book")
     public String updateBook(@RequestBody Book book){
         bookService.updateBook(book);
         return "Updated successfully";
     }
 
+    @PutMapping("/books")
+    public String updateBooks(@RequestBody List<Book> books){
+        bookService.updateBooks(books);
+        return "Added successfully";
+    }
+
     @DeleteMapping("/books/{bookId}")
     public String deleteBook(@PathVariable int bookId){
         bookService.deleteBook(bookId);
+        return "Deleted successfully";
+    }
+
+    @DeleteMapping("/books")
+    public String deleteBooks(@RequestParam List<Integer> bookIds){
+        bookService.deleteBooks(bookIds);
         return "Deleted successfully";
     }
 

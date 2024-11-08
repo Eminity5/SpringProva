@@ -5,21 +5,23 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Setter
 @Getter
 @Entity
-public class Book {
+public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
     private String name;
-    private int pages;
-    private String category;
-    private float price;
-    @ManyToOne
-    private Author author;
+    private String age;
+    @OneToMany(mappedBy = "author")
+    private List<Book> WrittenBooks;
 
 
 }
+
+

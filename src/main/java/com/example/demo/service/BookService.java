@@ -5,8 +5,6 @@ import com.example.demo.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -23,11 +21,15 @@ public class BookService {
         return bookRepository.findById(bookId).orElse(new Book());
     }
 
+    public List<Book> getBookByName(String name){
+        return bookRepository.findBookContaining(name);
+    }
+
     public void addBook(Book book) {
         bookRepository.save(book);
     }
 
-    public void addBook(List<Book> books) {
+    public void addBooks(List<Book> books) {
         bookRepository.saveAll(books);
     }
 
@@ -35,7 +37,15 @@ public class BookService {
         bookRepository.save(book);
     }
 
+    public void updateBooks(List<Book> books) {
+        bookRepository.saveAll(books);
+    }
+
     public void deleteBook(int bookId) {
        bookRepository.deleteById(bookId);
+    }
+
+    public void deleteBooks(List<Integer> bookIds){
+        bookRepository.deleteAllById(bookIds);
     }
 }
