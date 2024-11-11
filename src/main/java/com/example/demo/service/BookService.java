@@ -22,15 +22,25 @@ public class BookService {
     }
 
     public List<Book> getBookByName(String name){
-        return bookRepository.findBookContaining(name);
+        return bookRepository.findBooksByName(name.toUpperCase());
     }
 
-    public void addBook(Book book) {
+    public List<Book> getBookByType(String type){
+        return bookRepository.findBookByType(type);
+    }
+
+    public List<Book> getBookByPrice(float price){
+        return bookRepository.findLowerPricedBook(price);
+    }
+
+    public String addBook(Book book) {
         bookRepository.save(book);
+        return  "Added successfully";
     }
 
-    public void addBooks(List<Book> books) {
+    public String addBooks(List<Book> books) {
         bookRepository.saveAll(books);
+        return "Added successfully";
     }
 
     public String updateBook(Book book) {
@@ -60,11 +70,13 @@ public class BookService {
         }
     }
 
-    public void deleteBook(int bookId) {
+    public String  deleteBook(int bookId) {
        bookRepository.deleteById(bookId);
+       return "Deleted successfully";
     }
 
-    public void deleteBooks(List<Integer> bookIds){
+    public String deleteBooks(List<Integer> bookIds){
         bookRepository.deleteAllById(bookIds);
+        return "Deleted successfully";
     }
 }

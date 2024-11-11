@@ -3,6 +3,7 @@ package com.example.demo.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,11 +15,16 @@ public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+
+    @Column(name = "Name", unique = true, nullable = false)
     private String name;
+
+    @Column(name="Age")
     private String age;
 
     //@JsonManagedReference
     @OneToMany(mappedBy = "author")
+    @Column(name="WrittenBooks")
     @JsonIgnore
     private List<Book> WrittenBooks;
 

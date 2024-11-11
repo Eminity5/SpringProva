@@ -1,11 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Author;
-import com.example.demo.model.Book;
 import com.example.demo.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -18,20 +18,26 @@ public class AuthorService {
         return authorRepository.findAll();
     }
 
-    public Author getAuthorById(int authorId) {
-        return authorRepository.findById(authorId).orElse(new Author());
+    public Author getAuthorById(int id) {
+        return authorRepository.findById(id).orElse(new Author());
     }
 
     public List<Author> getAuthorByName(String name) {
-        return authorRepository.findAuthorContaining(name);
+        return authorRepository.findAuthorsByName(name.toUpperCase());
     }
 
-    public void addAuthor(Author author) {
+    public List<Author> getAuthorByAge(int age) {
+        return authorRepository.findAuthorByAge(age);
+    }
+
+    public String addAuthor(Author author) {
         authorRepository.save(author);
+        return "Added successfully";
     }
 
-    public void addAuthors(List<Author> authors) {
+    public String addAuthors(List<Author> authors) {
         authorRepository.saveAll(authors);
+        return "Added successfully";
     }
 
     public String updateAuthor(Author author) {
@@ -44,28 +50,26 @@ public class AuthorService {
     }
 
     public String updateAuthors(List<Author> authors) {
-        StringBuilder elementsNotFounded = new StringBuilder();
+        List<Integer> elementsNotFounded = new ArrayList<>();
 
         for(Author a : authors){
             if(authorRepository.existsById(a.getId())){
                 authorRepository.save(a);
             }else{
-                elementsNotFounded.append(a.getId() + " ");
+                elementsNotFounded.add(a.getId());
             }
         }
 
-        if (elementsNotFounded.isEmpty()){
-            return "Updated all elements successfully";
-        }else{
-            return "Elements " + elementsNotFounded.toString() + "were not found";
-        }
+        return elementsNotFounded.isEmpty() ?  "Elements " + elementsNotFounded.toString() + "were not found" : "Updated successfully";
     }
 
-    public void deleteAuthor(int authorId) {
+    public String deleteAuthor(int authorId) {
         authorRepository.deleteById(authorId);
+        return "Deleted successfully";
     }
 
-    public void deleteAuthors(List<Integer> authorIds) {
+    public String deleteAuthors(List<Integer> authorIds) {
         authorRepository.deleteAllById(authorIds);
+        return "Deleted successfully";
     }
 }

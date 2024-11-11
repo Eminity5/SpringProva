@@ -1,7 +1,8 @@
 package com.example.demo.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.aspectj.apache.bcel.classfile.Unknown;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,10 +12,18 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
+
+    @Column(name="Title", unique = true, nullable = false)
     private String name;
-    private int pages;
-    private String category;
-    private float price;
+
+    @Column(name="Pages")
+    private int pages = 0;
+
+    @Column(name="Type")
+    private String type = "Unknown";
+
+    @Column(name="Price")
+    private float price = 0;
 
     // @JsonBackReference
     @JoinColumn(name = "author_id")
@@ -47,12 +56,12 @@ public class Book {
         this.pages = pages;
     }
 
-    public String getCategory() {
-        return category;
+    public String getType() {
+        return type;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public float getPrice() {

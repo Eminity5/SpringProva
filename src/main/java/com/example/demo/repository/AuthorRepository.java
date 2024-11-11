@@ -11,6 +11,12 @@ import java.util.List;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Integer> {
 
-    @Query("SELECT a FROM Author a WHERE LOWER(a.name) LIKE LOWER(CONCAT('%', :name, '%'))")
-    List<Author> findAuthorContaining(@Param("name") String name);
+    @Query("SELECT a FROM Author a WHERE UPPER(a.name) LIKE '%:name%'")
+    List<Author> findAuthorsByName(@Param("name") String name);
+
+    @Query("SELECT a FROM Author a WHERE UPPER(a.name) = :name")
+    Author findAuthorByName(@Param("name") String name);
+
+    @Query("SELECT a FROM Author a WHERE a.age = :age")
+    List<Author> findAuthorByAge(@Param("age") int age);
 }

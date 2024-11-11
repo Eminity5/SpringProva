@@ -28,16 +28,24 @@ public class BookController {
         return bookService.getBookByName(name);
     }
 
+    @GetMapping("/books/searchByType")
+    public List<Book> getBookByType(@RequestParam String type){
+        return bookService.getBookByType(type);
+    }
+
+    @GetMapping("/books/searchByPrice")
+    public List<Book> getBookByPrice(@RequestParam float price){
+        return bookService.getBookByPrice(price);
+    }
+
     @PostMapping("/book")
     public String addBook(@RequestBody Book book){
-        bookService.addBook(book);
-        return "Added successfully";
+        return bookService.addBook(book);
     }
 
     @PostMapping("/books")
     public String addBooks(@RequestBody List<Book> books){
-        bookService.addBooks(books);
-        return "Added successfully";
+        return bookService.addBooks(books);
     }
 
     @PutMapping("/book")
@@ -52,14 +60,12 @@ public class BookController {
 
     @DeleteMapping("/books/{bookId}")
     public String deleteBook(@PathVariable int bookId){
-        bookService.deleteBook(bookId);
-        return "Deleted successfully";
+        return bookService.deleteBook(bookId);
     }
 
     @DeleteMapping("/books")
     public String deleteBooks(@RequestParam List<Integer> bookIds){
-        bookService.deleteBooks(bookIds);
-        return "Deleted successfully";
+        return bookService.deleteBooks(bookIds);
     }
 
 }

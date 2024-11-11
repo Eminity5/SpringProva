@@ -19,8 +19,8 @@ public class AuthorController {
     }
 
     @GetMapping("/authors/{authorId}")
-    public Author getAuthorById(@PathVariable int authorId){
-        return authorService.getAuthorById(authorId);
+    public Author getAuthorById(@PathVariable int id){
+        return authorService.getAuthorById(id);
     }
 
     @GetMapping("/authors/searchByName")
@@ -28,16 +28,19 @@ public class AuthorController {
         return authorService.getAuthorByName(name);
     }
 
+    @GetMapping("/authors/searchByAge")
+    public List<Author> getAuthorByAge(@RequestParam int age){
+        return authorService.getAuthorByAge(age);
+    }
+
     @PostMapping("/author")
     public String addAuthor(@RequestBody Author author){
-        authorService.addAuthor(author);
-        return "Added successfully";
+        return authorService.addAuthor(author);
     }
 
     @PostMapping("/authors")
     public String addAuthor(@RequestBody List<Author> authors){
-        authorService.addAuthors(authors);
-        return "Added successfully";
+        return authorService.addAuthors(authors);
     }
 
     @PutMapping("/author")
@@ -52,14 +55,12 @@ public class AuthorController {
 
     @DeleteMapping("/authors/{authorId}")
     public String deleteAuthor(@PathVariable int authorId){
-        authorService.deleteAuthor(authorId);
-        return "Deleted successfully";
+        return authorService.deleteAuthor(authorId);
     }
 
     @DeleteMapping("/authors")
     public String deleteAuthors(@RequestParam List<Integer> authorIds){
-        authorService.deleteAuthors(authorIds);
-        return "Deleted successfully";
+        return authorService.deleteAuthors(authorIds);
     }
 
 }
