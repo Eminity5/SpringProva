@@ -2,45 +2,64 @@ package com.example.demo.controller;
 
 import com.example.demo.model.Author;
 import com.example.demo.service.AuthorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class AuthorController {
+
+    Set<String> errors = new HashSet<>();
 
     @Autowired
     AuthorService authorService;
 
     @GetMapping("/authors")
-    public List<Author> getAuthorList(){
+    public List<Object> getAuthorList(){
         return authorService.getAuthorList();
     }
 
     @GetMapping("/authors/{authorId}")
-    public Author getAuthorById(@PathVariable int id){
+    public Object getAuthorById(@PathVariable int id){
         return authorService.getAuthorById(id);
     }
 
     @GetMapping("/authors/searchByName")
-    public List<Author> getAuthorByName(@RequestParam String name){
+    public List<Object> getAuthorByName(@RequestParam String name){
         return authorService.getAuthorByName(name);
     }
 
     @GetMapping("/authors/searchByAge")
-    public List<Author> getAuthorByAge(@RequestParam int age){
+    public List<Object> getAuthorByAge(@RequestParam int age){
         return authorService.getAuthorByAge(age);
     }
 
     @PostMapping("/author")
-    public String addAuthor(@RequestBody Author author){
-        return authorService.addAuthor(author);
+    public String addAuthor(@Valid @RequestBody Author author, BindingResult result){
+        errors.clear();
+        if(result.hasErrors()){
+            result.getFieldErrors().forEach(error ->
+                    errors.add(error.getDefaultMessage()));
+            return errors.toString();
+        }
+        return authorService.addAuthor(author, result);
     }
 
     @PostMapping("/authors")
-    public String addAuthor(@RequestBody List<Author> authors){
-        return authorService.addAuthors(authors);
+    public String addAuthor(@Valid @RequestBody List<Author> authors, BindingResult result){
+        errors.clear();
+        if(result.hasErrors()){
+            result.getFieldErrors().forEach(error ->
+                    errors.add(error.getDefaultMessage()));
+            return errors.toString();
+        } else {
+            return authorService.addAuthors(authors);
+        }
     }
 
     @PutMapping("/author")

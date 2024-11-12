@@ -2,10 +2,15 @@ package com.example.demo.service;
 
 import com.example.demo.model.Book;
 import com.example.demo.repository.BookRepository;
+import com.example.demo.validator.BookValidator;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.BeanPropertyBindingResult;
 
-import java.util.List;
+
+import java.util.*;
 
 @Service
 public class BookService {
@@ -13,16 +18,42 @@ public class BookService {
     @Autowired
     BookRepository bookRepository;
 
-    public List<Book> getBookList(){
-        return bookRepository.findAll();
+    @Autowired
+    private BookValidator bookValidator;
+
+    Set<String> errors = new HashSet<>();
+
+
+    public List<Object> getBookList(){
+        List<Object> l = new ArrayList<>();
+        l.addAll(bookRepository.findAll());
+
+        if(l.isEmpty()){
+            l.add("No Elements found");
+            return l;
+        } else{
+            return l;
+        }
     }
 
-    public Book getBookById(int bookId){
-        return bookRepository.findById(bookId).orElse(new Book());
+    public Object getBookById(int bookId){
+        if(bookRepository.existsById(bookId)){
+            return bookRepository.findById(bookId).get();
+        } else {
+            return "Element doesn't exist by id of "+ bookId;
+        }
     }
 
-    public List<Book> getBookByName(String name){
-        return bookRepository.findBooksByName(name.toUpperCase());
+    public List<Object> getBookByName(String name){
+        List<Object> l = new ArrayList<>();
+        l.addAll(bookRepository.findBooksByName(name.toUpperCase()));
+
+        if(l.isEmpty()){
+            l.add("No Elements found");
+            return l;
+        } else{
+            return l;
+        }
     }
 
     public List<Book> getBookByType(String type){
@@ -33,21 +64,41 @@ public class BookService {
         return bookRepository.findLowerPricedBook(price);
     }
 
-    public String addBook(Book book) {
-        bookRepository.save(book);
-        return  "Added successfully";
+    public String addBook(Book book, BindingResult result) {
+        bookValidator.validate(book, result);
+
+        if (result.hasErrors()){
+            result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+            return errors.toString();
+        } else {
+            bookRepository.save(book);
+            return  "Added successfully";
+        }
     }
 
-    public String addBooks(List<Book> books) {
-        bookRepository.saveAll(books);
-        return "Added successfully";
+    public String addBooks(List<Book> books, BindingResult result) {
+        for (Book book : books){
+            BindingResult bookResult = new BeanPropertyBindingResult(book, "book");
+            bookValidator.validate(book, bookResult);
+
+            if(bookResult.hasErrors()){
+                bookResult.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+            } else{
+                bookRepository.save(book);
+            }
+        }
+        if(!errors.isEmpty()){
+            return errors.toString() + (" Some elements present errors and were not added");
+        } else {
+            return  "Added successfully";
+        }
     }
 
     public String updateBook(Book book) {
         if(bookRepository.existsById(book.getId())){
             bookRepository.save(book);
             return "Updated successfully";
-        }else {
+        } else {
             return "Element does not Exist";
         }
     }
@@ -70,13 +121,29 @@ public class BookService {
         }
     }
 
-    public String  deleteBook(int bookId) {
-       bookRepository.deleteById(bookId);
-       return "Deleted successfully";
+    public String deleteBook(int bookId) {
+        if(bookRepository.existsById(bookId)){
+            bookRepository.deleteById(bookId);
+            return "Deleted successfully";
+        } else{
+            return "Element doesn't exist by id of " + bookId;
+        }
     }
 
     public String deleteBooks(List<Integer> bookIds){
-        bookRepository.deleteAllById(bookIds);
-        return "Deleted successfully";
+        boolean atLeastOneElementWasNotFound = false;
+        for(Integer id : bookIds){
+            if (bookRepository.existsById(id)){
+                bookRepository.deleteById(id);
+            }else{
+                atLeastOneElementWasNotFound = true;
+            }
+        }
+        if(!atLeastOneElementWasNotFound) {
+            return "Deleted successfully";
+        } else {
+            return "Some elements were not found";
+        }
+
     }
 }

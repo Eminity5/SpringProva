@@ -2,11 +2,16 @@ package com.example.demo.service;
 
 import com.example.demo.model.Author;
 import com.example.demo.repository.AuthorRepository;
+import com.example.demo.validator.AuthorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AuthorService {
@@ -14,30 +19,84 @@ public class AuthorService {
     @Autowired
     AuthorRepository authorRepository;
 
-    public List<Author> getAuthorList() {
-        return authorRepository.findAll();
+    @Autowired
+    private AuthorValidator authorValidator;
+
+    Set<String> errors = new HashSet<>();
+
+
+    public List<Object> getAuthorList() {
+        List<Object> l = new ArrayList<>();
+        l.addAll(authorRepository.findAll());
+
+        if(l.isEmpty()){
+            l.add("No Elements found");
+            return l;
+        } else{
+            return l;
+        }
     }
 
-    public Author getAuthorById(int id) {
-        return authorRepository.findById(id).orElse(new Author());
+    public Object getAuthorById(int id) {
+        if(authorRepository.existsById(id)){
+            return authorRepository.findById(id).get();
+        } else {
+            return "Element doesn't exist by id of "+ id;
+        }
     }
 
-    public List<Author> getAuthorByName(String name) {
-        return authorRepository.findAuthorsByName(name.toUpperCase());
+    public List<Object> getAuthorByName(String name) {
+        List<Object> l = new ArrayList<>();
+        l.addAll(authorRepository.findAuthorsByName(name.toUpperCase()));
+
+        if(l.isEmpty()){
+            l.add("No Elements found");
+            return l;
+        } else{
+            return l;
+        }
     }
 
-    public List<Author> getAuthorByAge(int age) {
-        return authorRepository.findAuthorByAge(age);
+    public List<Object> getAuthorByAge(int age) {
+        List<Object> l = new ArrayList<>();
+        l.addAll(authorRepository.findAuthorByAge(age));
+
+        if(l.isEmpty()){
+            l.add("No Elements found");
+            return l;
+        } else{
+            return l;
+        }
     }
 
-    public String addAuthor(Author author) {
-        authorRepository.save(author);
-        return "Added successfully";
+    public String addAuthor(Author author, BindingResult result) {
+        authorValidator.validate(author, result);
+
+        if(result.hasErrors()){
+            result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+            return errors.toString();
+        } else {
+            authorRepository.save(author);
+            return  "Added successfully";
+        }
     }
 
     public String addAuthors(List<Author> authors) {
-        authorRepository.saveAll(authors);
-        return "Added successfully";
+        for (Author author : authors){
+            BindingResult authorResult = new BeanPropertyBindingResult(author, "author");
+            authorValidator.validate(author, authorResult);
+
+            if(authorResult.hasErrors()){
+                authorResult.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+            } else{
+                authorRepository.save(author);
+            }
+        }
+        if(!errors.isEmpty()){
+            return errors.toString() + (" Some elements present errors and were not added");
+        } else {
+            return  "Added successfully";
+        }
     }
 
     public String updateAuthor(Author author) {
@@ -64,12 +123,27 @@ public class AuthorService {
     }
 
     public String deleteAuthor(int authorId) {
-        authorRepository.deleteById(authorId);
-        return "Deleted successfully";
+        if(authorRepository.existsById(authorId)){
+            authorRepository.deleteById(authorId);
+            return "Deleted successfully";
+        } else {
+            return "Element doesn't exist by id of " + authorId;
+        }
     }
 
     public String deleteAuthors(List<Integer> authorIds) {
-        authorRepository.deleteAllById(authorIds);
-        return "Deleted successfully";
+        boolean atLeastOneElementWasNotFound = false;
+        for(Integer id : authorIds){
+            if (authorRepository.existsById(id)){
+                authorRepository.deleteById(id);
+            }else{
+                atLeastOneElementWasNotFound = true;
+            }
+        }
+        if(!atLeastOneElementWasNotFound) {
+            return "Deleted successfully";
+        } else {
+            return "Some elements were not found";
+        }
     }
 }

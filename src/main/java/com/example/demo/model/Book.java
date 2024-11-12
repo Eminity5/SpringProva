@@ -1,8 +1,11 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.aspectj.apache.bcel.classfile.Unknown;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,24 +16,25 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name="Title", unique = true, nullable = false)
+    @Column(name="name", unique = true)
+    @NotBlank(message = "You must provide a name")
     private String name;
 
-    @Column(name="Pages")
-    private int pages = 0;
+    @Column(name="pages")
+    @Min(value = 1, message = "Pages must be at least 1")
+    private int pages = 1;
 
-    @Column(name="Type")
+    @Column(name="type")
     private String type = "Unknown";
 
-    @Column(name="Price")
+    @Column(name="price")
+    @Min(value = 0, message = "Price must be at least 0")
     private float price = 0;
 
     // @JsonBackReference
     @JoinColumn(name = "author_id")
     @ManyToOne
     private Author author;
-
-
 
     public int getId() {
         return id;
@@ -52,7 +56,7 @@ public class Book {
         return pages;
     }
 
-    public void setPages(int pages) {
+    public void setPages(/*@Min(0) */int pages) {
         this.pages = pages;
     }
 
@@ -68,7 +72,7 @@ public class Book {
         return price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(/*@Min(0) */float price) {
         this.price = price;
     }
 

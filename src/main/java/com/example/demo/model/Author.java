@@ -1,9 +1,9 @@
 package com.example.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,17 +16,21 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name = "Name", unique = true, nullable = false)
+    @Column(name = "name")
+    @NotBlank
     private String name;
 
-    @Column(name="Age")
-    private String age;
+    @Column(name="age")
+    @Min(value = 0, message = "Age must be at least 0")
+    private int age;
 
     //@JsonManagedReference
     @OneToMany(mappedBy = "author")
     @Column(name="WrittenBooks")
     @JsonIgnore
     private List<Book> WrittenBooks;
+
+    // attestato in pdf
 
 
 
@@ -46,11 +50,11 @@ public class Author {
         this.name = name;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
