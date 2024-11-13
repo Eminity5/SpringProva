@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,9 +39,13 @@ public class AuthorService {
         }
     }
 
-    public Object getAuthorById(int id) {
+    public Object getAuthorById(int id) throws IOException {
         if(authorRepository.existsById(id)){
-            return authorRepository.findById(id).get();
+            Author author = authorRepository.findById(id).get();
+            if(author.getCertificate() != null){
+                author.certificateToFile();
+            }
+            return author;
         } else {
             return "Element doesn't exist by id of "+ id;
         }
@@ -69,14 +75,24 @@ public class AuthorService {
         }
     }
 
-    public String addAuthor(Author author, BindingResult result) {
+    public String addAuthor(Author author, MultipartFile certificate, BindingResult result) throws IOException {
         authorValidator.validate(author, result);
 
         if(result.hasErrors()){
             result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
             return errors.toString();
         } else {
+            if(certificate != null){
+                try{
+                   // author.setPdfDocument(Files.readAllBytes(pdfFile.toPath()));
+                    author.setCertificate(certificate.getBytes());
+
+                } catch (IOException e){
+                    throw new RuntimeException("Error during PDF loading");
+                }
+            }
             authorRepository.save(author);
+
             return  "Added successfully";
         }
     }

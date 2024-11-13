@@ -46,8 +46,7 @@ public class BookController {
     public String addBook(@Valid @RequestBody Book book, BindingResult result){
         errors.clear();
         if(result.hasErrors()){
-            result.getFieldErrors().forEach(error ->
-                    errors.add(error.getDefaultMessage()));
+            result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
             return errors.toString();
         } else {
             return bookService.addBook(book, result);

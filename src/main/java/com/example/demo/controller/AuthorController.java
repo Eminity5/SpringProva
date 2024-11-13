@@ -6,7 +6,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,8 +28,8 @@ public class AuthorController {
     }
 
     @GetMapping("/authors/{authorId}")
-    public Object getAuthorById(@PathVariable int id){
-        return authorService.getAuthorById(id);
+    public Object getAuthorById(@PathVariable int authorId) throws IOException {
+        return authorService.getAuthorById(authorId);
     }
 
     @GetMapping("/authors/searchByName")
@@ -40,14 +43,13 @@ public class AuthorController {
     }
 
     @PostMapping("/author")
-    public String addAuthor(@Valid @RequestBody Author author, BindingResult result){
+    public String addAuthor(@Valid @RequestPart("author") Author author, @RequestPart(value= "certificateDocument", required = false) MultipartFile certificateDocument, BindingResult result) throws IOException {
         errors.clear();
         if(result.hasErrors()){
-            result.getFieldErrors().forEach(error ->
-                    errors.add(error.getDefaultMessage()));
+            result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
             return errors.toString();
         }
-        return authorService.addAuthor(author, result);
+        return authorService.addAuthor(author, certificateDocument, result);
     }
 
     @PostMapping("/authors")

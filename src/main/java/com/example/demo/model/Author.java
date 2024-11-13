@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -26,12 +28,13 @@ public class Author {
 
     //@JsonManagedReference
     @OneToMany(mappedBy = "author")
-    @Column(name="WrittenBooks")
+    @Column(name="written_books")
     @JsonIgnore
     private List<Book> WrittenBooks;
 
-    // attestato in pdf
-
+    @Lob
+    @Column(name="certificate")
+    private byte[] certificate;
 
 
     public int getId() {
@@ -66,6 +69,20 @@ public class Author {
     @JsonIgnore
     public void setWrittenBooks(List<Book> writtenBooks) {
         WrittenBooks = writtenBooks;
+    }
+
+    public byte[] getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(byte[] certificate) {
+        this.certificate = certificate;
+    }
+
+    public void certificateToFile() throws IOException {
+        try (FileOutputStream fos = new FileOutputStream("C:/Users/Winet/IdeaProjects/demo/pdffiles/"+ name + "Certificate.pdf")) {
+            fos.write(certificate);
+        }
     }
 }
 
