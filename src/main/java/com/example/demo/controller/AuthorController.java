@@ -65,8 +65,13 @@ public class AuthorController {
     }
 
     @PutMapping("/author")
-    public String updateAuthor(@RequestBody Author author){
-        return authorService.updateAuthor(author);
+    public String updateAuthor(@Valid @RequestPart("author") Author author, @RequestPart(value= "certificateDocument", required = false) MultipartFile certificateDocument, BindingResult result) throws IOException{
+        errors.clear();
+        if(result.hasErrors()){
+            result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
+            return errors.toString();
+        }
+        return authorService.updateAuthor(author, certificateDocument, result);
     }
 
     @PutMapping("/authors")

@@ -1,9 +1,11 @@
 package com.example.demo.model;
 
+import com.example.demo.repository.AuthorRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
@@ -19,7 +21,7 @@ public class Author {
     private int id;
 
     @Column(name = "name")
-    @NotBlank
+    @NotBlank(message = "You must provide the name")
     private String name;
 
     @Column(name="age")
@@ -36,6 +38,8 @@ public class Author {
     @Column(name="certificate")
     private byte[] certificate;
 
+    @Column(name="tax_code")
+    private String taxCode;
 
     public int getId() {
         return id;
@@ -77,6 +81,14 @@ public class Author {
 
     public void setCertificate(byte[] certificate) {
         this.certificate = certificate;
+    }
+
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
     }
 
     public void certificateToFile() throws IOException {

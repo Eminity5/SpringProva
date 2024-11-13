@@ -52,8 +52,7 @@ public class AuthorService {
     }
 
     public List<Object> getAuthorByName(String name) {
-        List<Object> l = new ArrayList<>();
-        l.addAll(authorRepository.findAuthorsByName(name.toUpperCase()));
+        List<Object> l = new ArrayList<>(authorRepository.findAuthorsByName(name.toUpperCase()));
 
         if(l.isEmpty()){
             l.add("No Elements found");
@@ -75,17 +74,17 @@ public class AuthorService {
         }
     }
 
-    public String addAuthor(Author author, MultipartFile certificate, BindingResult result) throws IOException {
+    public String addAuthor(Author author, MultipartFile certificateDocument, BindingResult result) throws IOException {
         authorValidator.validate(author, result);
 
         if(result.hasErrors()){
             result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
             return errors.toString();
         } else {
-            if(certificate != null){
+            if(certificateDocument != null){
                 try{
-                   // author.setPdfDocument(Files.readAllBytes(pdfFile.toPath()));
-                    author.setCertificate(certificate.getBytes());
+                    // author.setPdfDocument(Files.readAllBytes(pdfFile.toPath()));
+                    author.setCertificate(certificateDocument.getBytes());
 
                 } catch (IOException e){
                     throw new RuntimeException("Error during PDF loading");
@@ -115,9 +114,23 @@ public class AuthorService {
         }
     }
 
-    public String updateAuthor(Author author) {
+    public String updateAuthor(Author author, MultipartFile certificateDocument, BindingResult result) throws IOException{
+
+        if(certificateDocument != null){
+            try{
+                // author.setPdfDocument(Files.readAllBytes(pdfFile.toPath()));
+                author.setCertificate(certificateDocument.getBytes());
+            } catch (IOException e){
+                throw new RuntimeException("Error during PDF loading");
+            }
+        }
+
         if(authorRepository.existsById(author.getId())){
-            authorRepository.save(author);
+            Author authorFromDataBase = authorRepository.findById(author.getId()).get();
+
+            keepOldChange(author, authorFromDataBase);
+
+            authorRepository.save(authorFromDataBase);
             return "Updated successfully";
         }else {
             return "Element does not Exist";
@@ -161,5 +174,32 @@ public class AuthorService {
         } else {
             return "Some elements were not found";
         }
+    }
+
+    private void keepOldChange(Author author, Author authorFromDataBase){
+        try{
+            if(author.getName() != null){
+                authorFromDataBase.setName(author.getName());
+            }
+        }catch (Exception e){}
+
+        try{
+            System.out.println(author.getAge());
+            if(author.getAge() != 0){
+                authorFromDataBase.setAge(author.getAge());
+            }
+        }catch (Exception e){}
+
+        try{
+            if(author.getCertificate() != null){
+                authorFromDataBase.setCertificate(author.getCertificate());
+            }
+        }catch (Exception e){}
+
+        try{
+            if(author.getTaxCode() != null){
+                authorFromDataBase.setTaxCode(author.getTaxCode());
+            }
+        }catch (Exception e){}
     }
 }
