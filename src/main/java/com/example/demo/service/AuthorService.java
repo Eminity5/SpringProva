@@ -4,16 +4,19 @@ import com.example.demo.model.Author;
 import com.example.demo.repository.AuthorRepository;
 import com.example.demo.validator.AuthorValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.*;
 
 @Service
 public class AuthorService {
@@ -42,9 +45,12 @@ public class AuthorService {
     public Object getAuthorById(int id) throws IOException {
         if(authorRepository.existsById(id)){
             Author author = authorRepository.findById(id).get();
+
+            author.setAge(author.determineAge());
             if(author.getCertificate() != null){
                 author.certificateToFile();
             }
+
             return author;
         } else {
             return "Element doesn't exist by id of "+ id;
@@ -62,7 +68,7 @@ public class AuthorService {
         }
     }
 
-    public List<Object> getAuthorByAge(int age) {
+    /*public List<Object> getAuthorByAge(int age) {
         List<Object> l = new ArrayList<>();
         l.addAll(authorRepository.findAuthorByAge(age));
 
@@ -72,7 +78,7 @@ public class AuthorService {
         } else{
             return l;
         }
-    }
+    }*/
 
     public String addAuthor(Author author, MultipartFile certificateDocument, BindingResult result) throws IOException {
         authorValidator.validate(author, result);
@@ -184,9 +190,8 @@ public class AuthorService {
         }catch (Exception e){}
 
         try{
-            System.out.println(author.getAge());
-            if(author.getAge() != 0){
-                authorFromDataBase.setAge(author.getAge());
+            if(author.getDateOfBirth() != null){
+                authorFromDataBase.setDateOfBirth(author.getDateOfBirth());
             }
         }catch (Exception e){}
 

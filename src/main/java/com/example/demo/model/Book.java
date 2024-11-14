@@ -8,6 +8,9 @@ import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Component
 @Entity
 public class Book {
@@ -16,18 +19,18 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name="name", unique = true)
+    @Column(unique = true)
     @NotBlank(message = "You must provide a name")
     private String name;
 
-    @Column(name="pages")
+    @Column
     @Min(value = 1, message = "Pages must be at least 1")
     private int pages = 1;
 
-    @Column(name="type")
+    @Column
     private String type = "Unknown";
 
-    @Column(name="price")
+    @Column
     @Min(value = 0, message = "Price must be at least 0")
     private float price = 0;
 
@@ -35,6 +38,9 @@ public class Book {
     @JoinColumn(name = "author_id")
     @ManyToOne
     private Author author;
+
+    @Column
+    private LocalDateTime dateTime;
 
     public int getId() {
         return id;
@@ -82,5 +88,13 @@ public class Book {
 
     public void setAuthor(Author author) {
         this.author = author;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

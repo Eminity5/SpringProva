@@ -37,10 +37,10 @@ public class AuthorController {
         return authorService.getAuthorByName(name);
     }
 
-    @GetMapping("/authors/searchByAge")
+   /* @GetMapping("/authors/searchByAge")
     public List<Object> getAuthorByAge(@RequestParam int age){
         return authorService.getAuthorByAge(age);
-    }
+    }*/
 
     @PostMapping("/author")
     public String addAuthor(@Valid @RequestPart("author") Author author, @RequestPart(value= "certificateDocument", required = false) MultipartFile certificateDocument, BindingResult result) throws IOException {

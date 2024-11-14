@@ -5,11 +5,15 @@ import com.example.demo.repository.BookRepository;
 import com.example.demo.validator.BookValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.BeanPropertyBindingResult;
 
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -71,6 +75,11 @@ public class BookService {
             result.getFieldErrors().forEach(error -> errors.add(error.getDefaultMessage()));
             return errors.toString();
         } else {
+            DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm"); //specifico il formato
+            String formattedDate = LocalDateTime.now().format(myFormatObj); //prendi il giorno e lo formatti
+            LocalDateTime localDateTimeFormatted = LocalDateTime.parse(formattedDate, myFormatObj); //trasformi da string a localdatetime
+            book.setDateTime(localDateTimeFormatted);
+
             bookRepository.save(book);
             return  "Added successfully";
         }

@@ -1,15 +1,16 @@
 package com.example.demo.model;
 
-import com.example.demo.repository.AuthorRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -20,13 +21,15 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name = "name")
+    @Column
     @NotBlank(message = "You must provide the name")
     private String name;
 
-    @Column(name="age")
-    @Min(value = 0, message = "Age must be at least 0")
-    private int age;
+    @Column
+    private Date dateOfBirth;
+
+    private transient int age = determineAge();
+   // public int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
 
     //@JsonManagedReference
     @OneToMany(mappedBy = "author")
@@ -35,11 +38,13 @@ public class Author {
     private List<Book> WrittenBooks;
 
     @Lob
-    @Column(name="certificate")
+    @Column
     private byte[] certificate;
 
     @Column(name="tax_code")
     private String taxCode;
+
+
 
     public int getId() {
         return id;
@@ -55,6 +60,14 @@ public class Author {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public int getAge() {
@@ -89,6 +102,17 @@ public class Author {
 
     public void setTaxCode(String taxCode) {
         this.taxCode = taxCode;
+    }
+
+    public int determineAge(){
+        if(dateOfBirth != null){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(dateOfBirth);
+
+            return (Calendar.getInstance().get(Calendar.YEAR) - calendar.get(Calendar.YEAR));
+        } else {
+            return 0;
+        }
     }
 
     public void certificateToFile() throws IOException {

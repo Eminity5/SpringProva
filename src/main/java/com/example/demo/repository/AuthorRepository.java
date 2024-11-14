@@ -17,6 +17,6 @@ public interface AuthorRepository extends JpaRepository<Author, Integer> {
     @Query("SELECT a FROM Author a WHERE UPPER(a.name) = :name")
     Author findAuthorByName(@Param("name") String name);
 
-    @Query("SELECT a FROM Author a WHERE a.age = :age")
-    List<Author> findAuthorByAge(@Param("age") int age);
+    /*@Query("SELECT a FROM Author a WHERE a.age = :age")
+    List<Author> findAuthorByAge(@Param("age") int age);*/
 }
